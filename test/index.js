@@ -1,29 +1,42 @@
 const td = require("testdouble");
 
-const mqttConfig = { url: "mqtt://test.bigboat.io" };
-let mqttStub = null;
-let mqttClient = null;
-let publish = null;
-let mqtt = null;
+const mqttConfig = {
+  url: "mqtt://mqtt.test.server:8883",
+  username: "test-user",
+  password: "test-pass"
+};
 
 describe("MQTT client", () => {
+  let _mqtt = null;
+  let mqtt = null;
+  let client = null;
+
   beforeEach(() => {
-    mqttStub = {
-      on: td.function(),
-      publish: td.function()
+    _mqtt = td.replace("mqtt");
+    client = {
+      on: td.function(".on"),
+      publish: td.function(".publish")
     };
-    mqtt = td.replace("mqtt");
-    td.when(mqtt.connect(mqttConfig.url, mqttConfig)).thenReturn(mqttStub);
-    mqttClient = require("../src");
+    td.when(_mqtt.connect(mqttConfig.url, mqttConfig)).thenReturn(client);
+    mqtt = require("../src");
   });
 
-  it("should be able to publish JSON data", () => {
-    const res = mqttClient(mqttConfig);
+  afterEach(td.reset);
+
+  it("should invoke mqtt.js connect with the correct config", () => {
+    mqtt(mqttConfig);
+    td.verify(client.on("connect", td.matchers.isA(Function)));
+    td.verify(client.on("error", td.matchers.isA(Function)));
+    td.verify(client.on("close", td.matchers.isA(Function)));
+  });
+
+  it("should return a publish function", () => {
+    const mc = mqtt(mqttConfig);
     const data = { test: "val", another: 1 };
-    res.publish("/test/topic", data);
+    mc.publish("/my/topic", data);
     td.verify(
-      mqttStub.publish(
-        "/test/topic",
+      client.publish(
+        "/my/topic",
         JSON.stringify(data),
         { retain: true },
         td.matchers.isA(Function)
