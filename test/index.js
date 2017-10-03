@@ -15,6 +15,7 @@ describe("MQTT client", () => {
     _mqtt = td.replace("mqtt");
     client = {
       on: td.function(".on"),
+      subscribe: td.function(".subscribe"),
       publish: td.function(".publish")
     };
     td.when(_mqtt.connect(mqttConfig.url, mqttConfig)).thenReturn(client);
@@ -42,5 +43,19 @@ describe("MQTT client", () => {
         td.matchers.isA(Function)
       )
     );
+  });
+
+  it("should return an addSubscriptions function", () => {
+    const mc = mqtt(mqttConfig);
+    const subs = {
+      "/test/topic/1": td.function(),
+      "/test/topic/2": td.function(),
+      "/test/topic/3": td.function()
+    };
+    mc.addSubscriptions(subs);
+    td.verify(client.subscribe("/test/topic/1"));
+    td.verify(client.subscribe("/test/topic/2"));
+    td.verify(client.subscribe("/test/topic/3"));
+    td.verify(client.on("message", td.matchers.isA(Function)));
   });
 });

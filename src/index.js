@@ -15,13 +15,22 @@ module.exports = mqttConfig => {
   });
 
   return {
+    on: client.on.bind(client),
+    subscribe: client.subscribe.bind(client),
     publish: (topic, data, opts, cb) => {
       const options = _.merge({}, { retain: true }, opts);
       client.publish(topic, JSON.stringify(data), options, err => {
         if (err) {
-          console.error(`MQTT: ${topic}`, err);
+          console.error(`MQTT Publish: ${topic}`, err);
         }
         cb && cb(err);
+      });
+    },
+    addSubscriptions: subs => {
+      for (let topic in subs) client.subscribe(topic);
+      client.on("message", (topic, data) => {
+        const msg = JSON.parse(data.toString());
+        subs[topic](msg);
       });
     }
   };

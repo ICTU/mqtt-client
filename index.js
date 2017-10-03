@@ -6,7 +6,7 @@ module.exports = settings => {
   const mqttSettings = {
     url: process.env.MQTT_URL,
     username: process.env.MQTT_USERNAME,
-    passwrod: process.env.MQTT_PASSWORD
+    password: process.env.MQTT_PASSWORD
   };
 
   const opts = _.merge({}, mqttSettings, settings);
