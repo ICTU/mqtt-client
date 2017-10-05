@@ -26,8 +26,8 @@ module.exports = mqttConfig => {
         cb && cb(err);
       });
     },
-    addSubscriptions: subs => {
-      for (let topic in subs) client.subscribe(topic);
+    addSubscriptions: (subs, opts = {}) => {
+      for (let topic in subs) client.subscribe(topic, opts);
       client.on("message", (topic, data) => {
         const msg = JSON.parse(data.toString());
         subs[topic](msg);

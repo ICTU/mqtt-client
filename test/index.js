@@ -52,10 +52,10 @@ describe("MQTT client", () => {
       "/test/topic/2": td.function(),
       "/test/topic/3": td.function()
     };
-    mc.addSubscriptions(subs);
-    td.verify(client.subscribe("/test/topic/1"));
-    td.verify(client.subscribe("/test/topic/2"));
-    td.verify(client.subscribe("/test/topic/3"));
+    mc.addSubscriptions(subs, { qos: 2 });
+    td.verify(client.subscribe("/test/topic/1", { qos: 2 }));
+    td.verify(client.subscribe("/test/topic/2", { qos: 2 }));
+    td.verify(client.subscribe("/test/topic/3", { qos: 2 }));
     td.verify(client.on("message", td.matchers.isA(Function)));
   });
 });
