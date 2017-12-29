@@ -1,19 +1,21 @@
 {
   "name": "@bigboat/mqtt-client",
-  "version": "1.1.0",
-  "description": "",
+  "version": "1.1.1",
+  "description": "Simple MQTT client strictly for BigBoat needs",
   "main": "index.js",
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "mqtt",
+    "bigboat"
+  ],
+  "author": "greyarch",
   "license": "ISC",
   "scripts": {
-    "test":
-      "nyc --check-coverage --lines 60 --reporter=lcov --reporter=text --reporter=html mocha",
+    "test": "nyc --check-coverage --lines 60 --reporter=lcov --reporter=text --reporter=html mocha",
     "test:mutation": "stryker run"
   },
   "dependencies": {
     "lodash": "^4.17.4",
-    "mqtt": "^2.13.0"
+    "mqtt": "^2.15.0"
   },
   "devDependencies": {
     "mocha": "^3.5.3",
